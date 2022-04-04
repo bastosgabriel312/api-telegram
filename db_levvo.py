@@ -206,20 +206,3 @@ def criarEndereco(endereco,bairro,uf, cidade,cep):
 def lerEndereco(id):
    for endereco in db_session.query(Endereco).filter_by(id=id):
       return endereco
-
-
-
-
-
-#Insere dados do usuário na tabela usuários
-# cliente = Cliente(nome="Vinicius",email="vinicius@gmail.com",senha="vinicius123",telefone="11991677867")
- 
-
-
-#novoCliente = criarCliente("Gabriel Bastos","bastosgabriel312@gmail.com",123456, "11991111111")
-# novoEntregador = criarEntregador("Matheus Evangelista dos Santos","matheus.evangelista@gmail.com",123456,"11991672327","ABC1234")
-# db_session.add(novoEntregador)
-# db_session.commit()
-
-#print(novoCliente)
-#Select de dados dados

@@ -49,14 +49,6 @@ Endereço de Final:
 
     return report
 
-
-# Criar consulta que lista detalhes do pedido com base no número do pedido e confirmando e-mail
-
-
-
-
-
-
 @bot.message_handler(commands=["listarpedidos"])
 def opcaoListarPedidos(mensagem):
     print(mensagem.text)
@@ -88,10 +80,7 @@ def responder(message):
    bot.send_message(
        message.chat.id,
        ' SEJA BEM VINDO A LEVVO  \n\n' +
-       '1) Para Listar pedidos envie /listarpedidos [seu e-mail]\n' +
-       '2) Pedido \n' +
-       '3) Pedido ' +
-       'buying rates and selling rates.\n',
+       '- Para Listar pedidos envie /listarpedidos [seu e-mail]\n',
        reply_markup=keyboard
    )
 
