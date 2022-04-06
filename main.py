@@ -2,85 +2,77 @@ from time import sleep
 import telebot
 import re
 import os
-from db_levvo import *
+import json
+import requests
 
-token = os.environ['TOKEN_TELEGRAM']
+token = '5129049448:AAFdvLkIqJVI5dhR5hDpFhEk3OpET8ocShc' #os.environ['TOKEN_TELEGRAM']
 bot = telebot.TeleBot(token)
 
-############## Funções baseadas no Banco de dados ###########
+
+def cepJson2String(jsonCep):
+    text = f"""CEP: {jsonCep['cep']}\n
+Endereço: {jsonCep['logradouro']}\n
+Bairro: {jsonCep['bairro']}\n
+Cidade: {jsonCep['localidade']}\n
+UF: {jsonCep['uf']}
+"""
+    return text
 
 
-
-
-# verifica se é um e-mail válido ou se foi inserido algum e-mail após o comando /listrar pedidos
-def verificaEmail(mensagem):
+def consultaCep(mensagem):
+    reportCep = 'CEP inválido por favor insira novamente /consultacep [Seu CEP]'
+    # Trata o indexError proveniente da entrada do comando /consultacep sem um cep 
     try:
-        email = mensagem.text.split(' ')[1]
-        if email!= None:
-            result = re.search(r'[a-zA-Z0-9_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{1,3}$', email)
-            if result:
-                return True
-            else:
-                return False
-        return False
+        cep = mensagem.text.split(' ')[1]
+        url_cep = f"https://viacep.com.br/ws/{cep}/json/"
+        req = requests.get(url_cep)
+        # realiza  a consulta somente se o status code for igual a 200 (OK)
+        if req.status_code == 200:
+    	    dados_json = json.loads(req.text)
+    	    # Retorna o json formatado para string 
+    	    return cepJson2String(dados_json) 
+        else:
+            return reportCep
     except IndexError:
-        return False
-    return False
+        return reportCep
 
-# retorna pedidos com base no e-mail do cliente - recebe como parâmetro a mensagem do telegram
-def consultaPedidosEmail(mensagem):
-    report = "E-mail não localizado, por favor insira um novo e-mail digitando: /listarpedidos [novo e-mail]"
-    if verificaEmail(mensagem):
-        email = mensagem.text.split(' ')[1]
-        entregas = listaEntregasCliente(email)
-        # Caso não localize nenhum cliente retorna o report
-        if not entregas:
-            return report
-        text = ''
-        for entrega in entregas:
-            text += f'''Nº Entrega: {entrega['N Entrega']}
-Descrição: {entrega['Descricao']}
-Endereço de Coleta: 
-    {entrega['Endereço de Coleta']}
-Endereço de Final: 
-    {entrega['Endereço de Coleta']}'''
-            text+= ' \n\n'
-        return text
 
-    return report
 
-@bot.message_handler(commands=["listarpedidos"])
-def opcaoListarPedidos(mensagem):
+
+@bot.message_handler(commands=["consultarcep"])
+def opcaoLocalizaCep(mensagem):
     print(mensagem.text)
-    retornoEmail = consultaPedidosEmail(mensagem)
-    bot.send_message(mensagem.chat.id, retornoEmail)
+    retornoCep = consultaCep(mensagem)
+    bot.send_message(mensagem.chat.id, retornoCep)
 
 
 
 ####################### Inicia com essa mensagem ###################
 
-
 def verificar(mensagem):
     return True
+
+
+
 
 @bot.message_handler(func=verificar)
 def responder(message):
    keyboard = telebot.types.InlineKeyboardMarkup()
    keyboard.add(
        telebot.types.InlineKeyboardButton(
-           'Ir até a Levvo', url='telegram.me/bastosgabriel312'
+           'Ir até o repositório', url='https://github.com/bastosgabriel312/api-telegram'
        )
    )
    keyboard.add(
        telebot.types.InlineKeyboardButton(
            'Fale com um representante', url='telegram.me/bastosgabriel312'
-       )   
+       )
    )
 
    bot.send_message(
        message.chat.id,
-       ' SEJA BEM VINDO A LEVVO  \n\n' +
-       '- Para Listar pedidos envie /listarpedidos [seu e-mail]\n',
+       ' SEJA BEM VINDO A CONSULTA DE ENDEREÇO  \n\n' +
+       '- Para Consultar CEP envie /consultarcep [seu CEP]\n',
        reply_markup=keyboard
    )
 
