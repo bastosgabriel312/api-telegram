@@ -1,11 +1,9 @@
-from time import sleep
 import telebot
-import re
 import os
 import json
 import requests
 
-token = '5129049448:AAFdvLkIqJVI5dhR5hDpFhEk3OpET8ocShc' #os.environ['TOKEN_TELEGRAM']
+token = os.environ['TOKEN_TELEGRAM']
 bot = telebot.TeleBot(token)
 
 
@@ -21,7 +19,7 @@ UF: {jsonCep['uf']}
 
 def consultaCep(mensagem):
     reportCep = 'CEP inválido por favor insira novamente /consultacep [Seu CEP]'
-    # Trata o indexError proveniente da entrada do comando /consultacep sem um cep 
+    # Trata o indexError proveniente da entrada do comando /consultacep sem um cep
     try:
         cep = mensagem.text.split(' ')[1]
         url_cep = f"https://viacep.com.br/ws/{cep}/json/"
@@ -29,10 +27,11 @@ def consultaCep(mensagem):
         # realiza  a consulta somente se o status code for igual a 200 (OK)
         if req.status_code == 200:
     	    dados_json = json.loads(req.text)
-    	    # Retorna o json formatado para string 
-    	    return cepJson2String(dados_json) 
-        else:
-            return reportCep
+    	    # Tratamento para CEP inserido como 00000002, retorna 200 porém com um json com erro:true
+    	    if not 'erro' in dados_json:
+    	        # Retorna o json formatado para string
+    	        return cepJson2String(dados_json)
+        return reportCep
     except IndexError:
         return reportCep
 
@@ -48,14 +47,7 @@ def opcaoLocalizaCep(mensagem):
 
 
 ####################### Inicia com essa mensagem ###################
-
-def verificar(mensagem):
-    return True
-
-
-
-
-@bot.message_handler(func=verificar)
+@bot.message_handler()
 def responder(message):
    keyboard = telebot.types.InlineKeyboardMarkup()
    keyboard.add(
@@ -77,6 +69,5 @@ def responder(message):
    )
 
 
-
-
+# Executa bot em looping
 bot.polling()
