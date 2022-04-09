@@ -3,7 +3,7 @@ import os
 import json
 import requests
 
-token = os.environ['TOKEN_TELEGRAM']
+token = os.environ['TOKEN_LOCALIZA_BOT']
 bot = telebot.TeleBot(token)
 
 
@@ -40,7 +40,6 @@ def consultaCep(mensagem):
 
 @bot.message_handler(commands=["consultarcep"])
 def opcaoLocalizaCep(mensagem):
-    print(mensagem.text)
     retornoCep = consultaCep(mensagem)
     bot.send_message(mensagem.chat.id, retornoCep)
 
@@ -64,7 +63,8 @@ def responder(message):
    bot.send_message(
        message.chat.id,
        ' SEJA BEM VINDO A CONSULTA DE ENDEREÇO  \n\n' +
-       '- Para Consultar CEP envie /consultarcep [seu CEP]\n',
+       '- Para Consultar CEP envie /consultarcep [seu CEP] Somente numeros\n'+
+       '- Exemplo /consultarcep 01010000',
        reply_markup=keyboard
    )
 
