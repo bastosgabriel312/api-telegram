@@ -15,5 +15,6 @@
     @bot.message_handler(commands=["consultarcep"])
      def opcaoLocalizaCep(mensagem):
           retornoCep = consultaCep(mensagem)
-          bot.send_message(mensagem.chat.id, retornoCep)```
+          bot.send_message(mensagem.chat.id, retornoCep)
+          ```
     
