@@ -1,4 +1,7 @@
 # api-telegram
+### Bot Localizador de CEP  (Localiza CEP), como usar:
+ * Para Consultar CEP envie /consultarcep [seu CEP] Somente numeros
+ * Exemplo /consultarcep 01010000
 
 
 ## Tecnologias utilizadas (Docs)
@@ -7,7 +10,7 @@
   * TeleBotAPI (https://pypi.org/project/pyTelegramBotAPI/0.3.0/)
   * WS ViaCep (https://viacep.com.br/)
   
-## Sobre o código
+### Informações Sobre o código
   * Para maior segurança utilizamos a variável de ambiente 'TOKEN_TELEGRAM'<br>
     ``` token = os.environ['TOKEN_LOCALIZA_BOT']```
   * O decorator @bot.message_handler foi utilizado para manipular as informações recebidas pelo chat. No codigo abaixo por exemplo foi utilizado para executar a função opcaoLocalizaCep assim que o comando consultarcep for recebido.<br>
@@ -16,5 +19,5 @@
      def opcaoLocalizaCep(mensagem):
           retornoCep = consultaCep(mensagem)
           bot.send_message(mensagem.chat.id, retornoCep)
-          ```
+  ```
     
